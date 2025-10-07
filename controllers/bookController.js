@@ -41,7 +41,7 @@ const createBook = async (req, res) => {
     }
 
     const { title, author, condition, description } = req.body;
-    const imagePath = req.file ? req.file.filename : null;
+    const imagePath = req.savedFiles?.image || null;
 
     const book = new Book({
       title,
@@ -86,12 +86,15 @@ const updateBook = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { title, author, condition, description } = req.body;
-    const imagePath = req.file ? req.file.filename : undefined;
+    const { title, author, condition, description, removeImage } = req.body;
+    const imagePath = req.savedFiles?.image;
 
     const updateData = { title, author, condition, description };
+    
     if (imagePath) {
       updateData.imagePath = imagePath;
+    } else if (removeImage === 'true') {
+      updateData.imagePath = null;
     }
 
     const book = await Book.findOneAndUpdate(
