@@ -18,7 +18,6 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Optional authentication middleware (doesn't fail if no token)
 const optionalAuth = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];

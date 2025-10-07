@@ -12,18 +12,15 @@ const createRequest = async (req, res) => {
 
     const { book_id, message } = req.body;
 
-    // Check if book exists and is available
     const book = await Book.findOne({ _id: book_id, status: 'available' });
     if (!book) {
       return res.status(400).json({ message: 'Book not available' });
     }
 
-    // Check if user is not the owner
     if (book.owner.toString() === req.user.userId) {
       return res.status(400).json({ message: 'Cannot request your own book' });
     }
 
-    // Check if request already exists
     const existingRequest = await BookRequest.findOne({
       book: book_id,
       requester: req.user.userId
@@ -67,7 +64,6 @@ const getReceivedRequests = async (req, res) => {
       .populate('requester', 'name email')
       .sort({ createdAt: -1 });
 
-    // Filter out requests where book is null (not owned by user)
     const filteredRequests = requests.filter(req => req.book !== null);
     
     res.json(filteredRequests);
@@ -107,7 +103,7 @@ const getRequestById = async (req, res) => {
       return res.status(404).json({ message: 'Request not found' });
     }
 
-    // Check if user is authorized to view this request
+
     const isOwner = request.book.owner._id.toString() === req.user.userId;
     const isRequester = request.requester._id.toString() === req.user.userId;
 
@@ -133,7 +129,6 @@ const updateRequestStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    // Check if request exists and user is the book owner
     const request = await BookRequest.findById(id).populate('book');
     if (!request) {
       return res.status(404).json({ message: 'Request not found' });
@@ -177,7 +172,7 @@ const deleteRequest = async (req, res) => {
     const request = await BookRequest.findOneAndDelete({
       _id: req.params.id,
       requester: req.user.userId,
-      status: 'pending' // Only allow deletion of pending requests
+      status: 'pending' 
     });
 
     if (!request) {

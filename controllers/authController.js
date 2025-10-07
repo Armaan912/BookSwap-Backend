@@ -12,13 +12,11 @@ const register = async (req, res) => {
 
     const { name, email, password } = req.body;
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create user
     const user = new User({ name, email, password });
     await user.save();
 
@@ -49,13 +47,13 @@ const login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Find user
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Check password
+
     const isValidPassword = await user.comparePassword(password);
     if (!isValidPassword) {
       return res.status(400).json({ message: 'Invalid credentials' });
@@ -93,7 +91,6 @@ const getProfile = async (req, res) => {
   }
 };
 
-// Validation middleware
 const validateRegister = [
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 6 }),

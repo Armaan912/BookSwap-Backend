@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 require('dotenv').config();
 
-// Import routes
 const authRoutes = require('./routes/auth');
 const bookRoutes = require('./routes/books');
 const requestRoutes = require('./routes/requests');
@@ -40,10 +39,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/requests', requestRoutes);
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ message: 'BookSwap API is running!' });
-});
 
 // Start server
 app.listen(PORT, () => {
